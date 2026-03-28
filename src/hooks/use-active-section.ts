@@ -1,40 +1,62 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 
-export const useActiveSection = (sectionIds: string[], pathname: string = '/') => {
+export const useActiveSection = (sectionIds: string[]) => {
   const [activeSection, setActiveSection] = useState<string>('')
+  const [isScrolling, setIsScrolling] = useState(false)
 
-  // Clear active section when navigating to a different page
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
+
+  // Reset active section when pathname changes (route navigation)
   useEffect(() => {
-    if (pathname !== '/') {
-      setActiveSection('')
-    }
+    setActiveSection('')
   }, [pathname])
 
-  // Scroll to hash on mount if present
+  // Scroll to hash on mount or when pathname changes
   useEffect(() => {
     const hash = window.location.hash.slice(1) // Remove the '#'
 
     if (hash && sectionIds.includes(hash)) {
-      const element = document.getElementById(hash)
+      setIsScrolling(true)
 
-      if (element) {
-        // Small delay to ensure page is fully loaded
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }, 100)
+      const scrollToElement = () => {
+        const element = document.getElementById(hash)
+
+        if (element) {
+          // Get the navbar height (4rem = 64px which matches scroll-mt-16)
+          const navbarHeight = 64
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY
+          const offsetPosition = elementPosition - navbarHeight
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          })
+
+          // Wait for smooth scroll to complete before re-enabling intersection observer
+          setTimeout(() => {
+            setIsScrolling(false)
+            setActiveSection(hash)
+          }, 1000) // Smooth scroll typically takes ~500-800ms
+        }
       }
-    }
 
-    // Only run once on mount, not when sectionIds changes
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        // Add a small delay to ensure all content is rendered
+        setTimeout(scrollToElement, 100)
+      })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Run only once on mount
+  }, [pathname]) // Re-run when pathname changes (includes navigation from other pages)
 
   useEffect(() => {
-    // Only observe sections when on the home page
-    if (pathname !== '/') return
-
     const observer = new IntersectionObserver(
       entries => {
+        // Don't update active section while programmatically scrolling
+        if (isScrolling) return
+
         // Find all visible sections
         const visibleSections = entries
           .filter(entry => entry.isIntersecting)
@@ -48,17 +70,16 @@ export const useActiveSection = (sectionIds: string[], pathname: string = '/') =
             return a.boundingClientRect.top - b.boundingClientRect.top
           })
 
-        // Set the most visible section as active
+        // Set the most visible section as active, or clear if none are visible
         if (visibleSections.length > 0) {
           setActiveSection(visibleSections[0].target.id)
         } else {
-          // Clear active section when no sections are visible (e.g., scrolled past all sections into footer)
           setActiveSection('')
         }
       },
       {
-        rootMargin: '-20% 0px -35% 0px', // Adjust when sections become "active"
-        threshold: [0, 0.25, 0.5, 0.75, 1] // Multiple thresholds for better detection
+        rootMargin: '-64px 0px -90% 0px', // Match navbar height (64px = 4rem)
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] // Multiple thresholds for better detection
       }
     )
 
@@ -74,7 +95,7 @@ export const useActiveSection = (sectionIds: string[], pathname: string = '/') =
     return () => {
       observer.disconnect()
     }
-  }, [sectionIds, pathname])
+  }, [sectionIds, pathname, isScrolling])
 
   return activeSection
 }

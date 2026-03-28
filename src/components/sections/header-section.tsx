@@ -1,34 +1,72 @@
-import { MessagesSquareIcon, UsersIcon, GitCompareIcon } from 'lucide-react'
+import {
+  BrainCircuitIcon,
+  GitCompareArrowsIcon,
+  GitPullRequestDraftIcon,
+  HeadphonesIcon,
+  Trash2Icon,
+  UserIcon
+} from 'lucide-react'
 
-import type { Navigation } from '@/components/layout/hero-navigation'
 import Header from '@/components/layout/header'
+import type { Navigation } from '@/components/layout/header-navigation'
 
 const navigationData: Navigation[] = [
   {
-    title: 'Home',
-    href: '/#home'
+    title: 'Features',
+    href: '/#features'
   },
   {
-    title: 'Features',
-    contentClassName: '!w-70',
+    title: 'Use cases',
+    contentClassName: '!w-141 grid-cols-2',
+    splitItems: true,
     items: [
       {
-        title: 'Smart Conversations',
-        href: '/#features',
-        description: 'Design natural, engaging chat flows.',
-        icon: <MessagesSquareIcon className='size-4' />
+        type: 'section',
+        title: 'Sales & Customer Operations',
+        items: [
+          {
+            title: 'Pipeline Management',
+            href: '/#use-cases',
+            description: 'Track movement, update statuses, and flag stalled deals.',
+            icon: <GitPullRequestDraftIcon className='size-4' />
+          },
+          {
+            title: 'Customer Onboarding',
+            href: '#',
+            description: 'Automate welcome emails, account setup, and key guidance.',
+            icon: <UserIcon className='size-4' />
+          },
+          {
+            title: 'Support Escalations',
+            href: '#',
+            description: 'Detect urgency and route issues to the right team faster.',
+            icon: <HeadphonesIcon className='size-4' />
+          }
+        ]
       },
       {
-        title: '24/7 Customer Support',
-        href: '/#about-app',
-        description: 'Build brand-aligned AI personalities.',
-        icon: <UsersIcon className='size-4' />
-      },
-      {
-        title: 'Easy Integration',
-        href: '/#chatbot ',
-        description: 'Optimize prompts for better output.',
-        icon: <GitCompareIcon className='size-4' />
+        type: 'section',
+        title: 'Internal Productivity Workflows',
+        items: [
+          {
+            title: 'Knowledge Retrieval',
+            href: '#',
+            description: 'Ask AI and get instant answers from your tools/docs.',
+            icon: <BrainCircuitIcon className='size-4' />
+          },
+          {
+            title: 'Task Automation',
+            href: '#',
+            description: 'Convert messages into tasks and assign them automatically.',
+            icon: <GitCompareArrowsIcon className='size-4' />
+          },
+          {
+            title: 'Data Cleanup',
+            href: '#',
+            description: 'Auto-correct entries, remove duplicates, sync records.',
+            icon: <Trash2Icon className='size-4' />
+          }
+        ]
       }
     ]
   },
@@ -43,11 +81,15 @@ const navigationData: Navigation[] = [
   {
     title: 'Blog',
     href: '/blog'
+  },
+  {
+    title: 'App integration',
+    href: '/app-integration'
   }
 ]
 
-const HeaderSection = () => {
-  return <Header navigationData={navigationData} />
+const HeaderSection = ({ pathname }: { pathname?: string }) => {
+  return <Header navigationData={navigationData} pathname={pathname} />
 }
 
 export default HeaderSection

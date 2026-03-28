@@ -1,63 +1,79 @@
-import { Flower2Icon, SproutIcon, TreePalmIcon } from 'lucide-react'
-import Pricing from '@/components/blocks/pricing/pricing'
+import PricingSection from '@/components/blocks/pricing-section/pricing-section'
 
-export const plans = [
+type PricingPlan = {
+  name: string
+  description: string
+  price: number
+  yearlyPrice: number
+  currency: string
+  period: string
+  features: string[]
+  buttonText: string
+  buttonVariant: 'primary' | 'secondary'
+}
+
+const pricingPlans: PricingPlan[] = [
   {
-    name: 'Free',
-    monthlyPrice: 0,
-    annualPrice: 0,
-    icon: <SproutIcon className='size-6 shrink-0 text-white' />,
-    description: 'Recommended for small projects or startups.',
-    buttonText: 'Free plan',
+    name: 'Starter',
+    description: 'For individuals or small teams getting started',
+    price: 8,
+    yearlyPrice: 5.2,
+    currency: '$',
+    period: 'month',
     features: [
-      'For 1 User Limit',
-      'Access to AI-powered basic features',
-      'Limited usage',
-      'Real-time data tracking',
-      'Access to limited community'
-    ]
+      'Up to 3 active AI agents',
+      '100 automated tasks per month',
+      'Workflow designer access',
+      'Integration with Slack + Notion',
+      'Community support',
+      '1 shared workspace',
+      'API access'
+    ],
+    buttonText: 'Purchase plan',
+    buttonVariant: 'secondary'
   },
   {
-    name: 'Premium',
-    monthlyPrice: 69,
-    annualPrice: 99,
-    icon: <Flower2Icon className='size-6 shrink-0 text-white' />,
-    description: 'Everything in the Free Plan, plus:',
-    buttonText: 'Purchase plan',
-    isPopular: true,
+    name: 'Pro',
+    description: 'For growing teams ready to automate deeper',
+    price: 12,
+    yearlyPrice: 7.8,
+    currency: '$',
+    period: 'month',
     features: [
-      'All Premium Plan features',
-      'Up to 5 users',
-      'Custom branding options',
-      'Extended API access',
-      'Monthly performance reviews',
-      'Real-time data tracking and 24/7 support',
-      'Access to Full community'
-    ]
+      'Up to 15 active AI agents',
+      '500 automated tasks per month',
+      'Workflow designer + AI templates',
+      'Integration with Slack, Notion, and GitHub',
+      'Priority chat support',
+      '5 team workspaces',
+      'API + Webhook access'
+    ],
+    buttonText: 'Purchase plan',
+    buttonVariant: 'primary'
   },
   {
     name: 'Enterprise',
-    monthlyPrice: 159,
-    annualPrice: 299,
-    icon: <TreePalmIcon className='size-6 shrink-0 text-white' />,
-    description: 'Includes all Premium Plan features, plus:',
-    buttonText: 'Purchase plan',
+    description: 'For large organizations needing scale & control',
+    price: 25,
+    yearlyPrice: 16.25,
+    currency: '$',
+    period: 'month',
     features: [
-      'Custom onboarding and tailored solutions',
-      'Unlimited users',
-      'Monthly performance reviews',
-      'Exclusive webinars and resources',
-      'Real-time data tracking and 24/7 support',
-      'Full integration support & real-time tracking',
-      'Advanced security features and compliance',
-      'Dedicated account manager',
-      'Priority feature requests'
-    ]
+      'Unlimited active AI agents',
+      'Unlimited automated tasks',
+      'Advanced workflow orchestration',
+      'Integration with custom enterprise tools',
+      'Dedicated success manager',
+      'Unlimited workspaces',
+      'Advanced security & compliance'
+    ],
+    buttonText: 'Purchase plan',
+    buttonVariant: 'secondary'
   }
 ]
 
-const PricingSection = () => {
-  return <Pricing plans={plans} />
+const PricingSectionPage = () => {
+  return <PricingSection plans={pricingPlans} />
 }
 
-export default PricingSection
+export default PricingSectionPage

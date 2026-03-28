@@ -5,14 +5,13 @@ import sitemap from '@astrojs/sitemap'
 import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
 
-/** Canonical site URL (sitemap, RSS, Astro.site). Default: www. Set ASTRO_SITE_URL in CI/Coolify if needed. Redirect apex → www in your reverse proxy (e.g. Coolify). */
+/** Canonical site URL (sitemap, RSS, Astro.site). Default: www. Set ASTRO_SITE_URL in CI/Coolify if needed. */
 const siteBase = (process.env.ASTRO_SITE_URL || 'https://www.xnova-os.info').trim().replace(/\/+$/, '')
 const site = `${siteBase}/`
 
 export default defineConfig({
   site,
   // Static `astro preview` (pnpm start) reads Astro server.allowedHosts — not vite.preview.allowedHosts.
-  // See: astro/dist/core/preview/static-preview-server.js
   server: {
     allowedHosts: ['xnova-os.info', 'www.xnova-os.info', '.xnova-os.info']
   },

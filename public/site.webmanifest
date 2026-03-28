@@ -1,12 +1,12 @@
 {
-  "name": "Template Name - Template Slogan",
-  "short_name": "Template Name",
-  "description": "Build lightning-fast, SEO-optimized websites with Astro, shadcn/ui, and Tailwind CSS",
+  "name": "Demo: Orion - AI Agent Landing Page | Shadcn Studio",
+  "short_name": "Orion",
+  "description": "Automate routine tasks, connect your tools, and let your AI agent coordinate workflows so you can focus on strategy, not busywork. Boost productivity with intelligent automation.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#fcf8f1",
+  "theme_color": "#f66e60",
   "orientation": "portrait-primary",
   "categories": [
     "productivity",

@@ -1,85 +1,76 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import { getAllPosts, calculateReadTime } from '@/lib/data-utils'
-import BlogHeroSection from '@/components/blog/blog-hero-section/blog-hero-section'
+import { getAllPosts, getFeaturedPosts, calculateReadTime } from '@/lib/data-utils'
 import BlogSection from '@/components/blog/blog-section/blog-section'
-import FAQSection from '@/components/sections/faq-section'
-import CTASection from '@/components/sections/cta-section'
+import BlogCTASection from '@/components/sections/blog-cta-section'
+import FooterSection from '@/components/sections/footer-section'
+import { Badge } from '@/components/ui/badge'
+import { BorderBeam } from '@/components/ui/border-beam'
+import { MotionPreset } from '@/components/ui/motion-preset'
 
-// Get all blog posts
+// Get all blog posts and featured posts
 const allPosts = await getAllPosts()
+const featuredPostsData = await getFeaturedPosts()
 
-// Transform posts to match the BlogPost type
+// Transform posts to match the BlogPostMetadata type
 const blogData = allPosts.map(post => ({
   slug: post.data.slug,
   title: post.data.title,
   description: post.data.description,
-  imageUrl: post.data.imageUrl,
-  imageAlt: post.data.imageAlt || post.data.title,
-  pubDate: post.data.pubDate,
-  author: post.data.author,
-  avatarUrl: post.data.avatarUrl || '',
+  image: post.data.imageUrl || '/images/placeholder.jpg',
+  publishedAt: post.data.pubDate,
+  author: {
+    name: post.data.author,
+    picture: post.data.avatarUrl || '/images/avatar-placeholder.jpg'
+  },
   category: post.data.category,
-  readTime: calculateReadTime(post.body || ''),
-  featured: post.data.featured,
-  tags: post.data.tags
+  readTime: `${calculateReadTime(post.body || '')} min`,
+  featured: post.data.featured
 }))
 
-const filteredBlogData = blogData.filter(post => post.featured)
+const featuredPosts = featuredPostsData.map(post => ({
+  slug: post.data.slug,
+  title: post.data.title,
+  description: post.data.description,
+  image: post.data.imageUrl || '/images/placeholder.jpg',
+  publishedAt: post.data.pubDate,
+  author: {
+    name: post.data.author,
+    picture: post.data.avatarUrl || '/images/avatar-placeholder.jpg'
+  },
+  category: post.data.category,
+  readTime: `${calculateReadTime(post.body || '')} min`,
+  featured: post.data.featured
+}))
 
 const pageTitle = 'Blog'
-const pageDescription =
-  'Latest articles, tutorials, and product updates about Neural AI, applied machine learning, and building smarter products.'
+const pageDescription = 'Welcome to our blog. Stay updated with the latest news and articles.'
 
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
-    // Blog schema
     {
-      '@type': 'Blog',
-      '@id': `${Astro.site}blog/#blog`,
-      name: 'Shadcn Studio Blog',
-      description: pageDescription,
-      url: `${Astro.site}blog/`,
-      inLanguage: 'en-US',
-      publisher: {
-        '@type': 'Organization',
-        name: 'Shadcn Studio',
-        logo: {
-          '@type': 'ImageObject',
-          url: `${Astro.site}images/site-logo.png`
-        }
-      },
-      blogPost: blogData.map(post => ({
-        '@type': 'BlogPosting',
-        headline: post.title,
-        description: post.description,
-        image: {
-          '@type': 'ImageObject',
-          url: new URL(post.imageUrl, Astro.site).toString()
-        },
-        datePublished: post.pubDate,
-        author: {
-          '@type': 'Person',
-          name: post.author
-        },
-        url: `${Astro.site}blog/${post.slug}/`,
-        keywords: post.tags?.join(', '),
-        articleSection: post.category
-      }))
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${Astro.site}#website`,
+      name: 'Template Name',
+      description: 'Template Description',
+      url: `${Astro.site}`,
+      inLanguage: 'en-US'
     },
-
-    // WebPage schema
     {
+      '@context': 'https://schema.org',
       '@type': 'WebPage',
-      '@id': `${Astro.site}blog/#webpage`,
-      url: `${Astro.site}blog/`,
-      name: pageTitle,
-      description: pageDescription,
-      inLanguage: 'en-US',
+      '@id': `${Astro.site}#webpage`,
+      name: 'Blog',
+      description: 'Welcome to our blog. Stay updated with the latest news and articles.',
+      url: `${Astro.site}blog`,
       isPartOf: {
-        '@type': 'WebSite',
         '@id': `${Astro.site}#website`
+      },
+      potentialAction: {
+        '@type': 'ReadAction',
+        target: [`${Astro.site}blog`]
       }
     }
   ]
@@ -87,10 +78,40 @@ const schema = {
 ---
 
 <Layout title={pageTitle} description={pageDescription} schema={schema}>
-  <div class='pt-22 sm:pt-27'>
-    <BlogHeroSection posts={filteredBlogData} client:load />
-    <BlogSection posts={blogData} client:load />
-    <CTASection client:load />
-    <FAQSection client:load />
-  </div>
+  <!-- Hero -->
+  <section id='home' class='relative -mt-15.75 flex flex-col overflow-hidden pt-15.75'>
+    <div class='px-4 sm:px-6 lg:px-8'>
+      <div class='mx-auto flex max-w-7xl flex-col gap-6 border-x px-4 py-8 sm:px-6 sm:py-16 lg:px-8 lg:py-24'>
+        <div class='flex flex-col items-center gap-6 text-center'>
+          <MotionPreset fade blur transition={{ duration: 0.5 }} client:load>
+            <Badge variant='outline' className='bg-muted relative mb-4 gap-2.5 px-1.5 py-1'>
+              <span class='bg-primary text-primary-foreground flex h-5.5 items-center rounded-full px-2 py-0.5'>
+                Insights
+              </span>
+              <span class='text-muted-foreground text-sm font-normal text-wrap'>AI agent</span>
+              <BorderBeam colorFrom='var(--primary)' colorTo='var(--primary)' size={35} client:load />
+            </Badge>
+
+            <h1 class='mb-4 text-2xl font-semibold sm:text-3xl lg:text-5xl lg:leading-[1.29167]'>
+              Resources for Automating Work with AI Agents
+            </h1>
+
+            <p class='text-muted-foreground mx-auto max-w-3xl text-xl'>
+              Practical articles, guides, and insights to help you design smarter workflows, connect your tools, and
+              scale daily operations with AI.
+            </p>
+          </MotionPreset>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <BlogSection posts={blogData} featuredPosts={featuredPosts} client:load />
+
+  <!-- CTA Section -->
+  <BlogCTASection client:load />
+
+  <!-- Footer -->
+  <FooterSection newsletter={false} client:load />
 </Layout>

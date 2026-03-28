@@ -1,73 +1,81 @@
-import Testimonials from '@/components/blocks/testimonials/testimonials'
+import Testimonials from '@/components/blocks/testimonials-section/testimonials-section'
+import type { Testimonial } from '@/components/blocks/testimonials-section/testimonials-section'
 
-const testimonials = [
+const testimonialsData: Testimonial[] = [
   {
-    name: 'Avery Collins',
-    role: 'Head of Product',
-    company: 'Neural Labs',
-    avatar: '/images/avatar/avatar-1.webp',
-    rating: 5,
-    content: 'Neural AI landing page made our automation rollout effortless - beautiful UI and smooth onboarding.'
+    id: '1',
+    avatar: '/images/avatar/1.webp',
+    fallback: 'JL',
+    name: 'Jamie Lee',
+    designation: 'Operations Manager',
+    companyName: 'Bright Sync',
+    companyLogo: '/images/testimonial/01.webp',
+    message:
+      "This is completely transformed how we manage our daily tasks. What used to take hours now happens automatically and we've never been more productive."
   },
   {
-    name: 'Jordan Kim',
-    role: 'CTO',
-    company: 'SynapseWorks',
-    avatar: '/images/avatar/avatar-2.webp',
-    rating: 4.5,
-    content: 'Great demo site and components. The Neural AI landing page helped us prototype our product quickly.'
+    id: '2',
+    avatar: '/images/avatar/2.webp',
+    fallback: 'CD',
+    name: 'Catherine Dorsey',
+    designation: 'CEO',
+    companyName: 'Novas Solution',
+    companyLogo: '/images/testimonial/02.webp',
+    companyLogoDark: '/images/testimonial/02-dark.webp',
+    message:
+      "The intuitive interface and powerful features have streamlined our workflow. Our team collaboration improved dramatically and we've never been efficient."
   },
   {
-    name: 'Priya Nair',
-    role: 'Design Lead',
-    company: 'PixelForge',
-    avatar: '/images/avatar/avatar-3.webp',
-    rating: 4.8,
-    content:
-      'Beautiful layouts and clear messaging - the Neural AI landing page templates accelerated our design reviews.'
+    id: '3',
+    avatar: '/images/avatar/3.webp',
+    fallback: 'DH',
+    name: 'David Haz',
+    designation: 'Design Engineer',
+    companyName: 'Looma Labs',
+    companyLogo: '/images/testimonial/03.webp',
+    companyLogoDark: '/images/testimonial/03-dark.webp',
+    message:
+      "Implementing this solution was seamless and results were immediate. We've seen a 40% increase in efficiency and our customers are noticing difference."
   },
   {
-    name: 'Liam O’Connor',
-    role: 'Founder',
-    company: 'AutoFlow',
-    avatar: '/images/avatar/avatar-4.webp',
-    rating: 5,
-    content:
-      'Perfect starting point for our automation UI. Neural AI landing page saved weeks of work and make it look so easy.'
+    id: '4',
+    avatar: '/images/avatar/4.webp',
+    fallback: 'MS',
+    name: 'Moumen Soliman',
+    designation: 'Software Engineer',
+    companyName: 'Crestline',
+    companyLogo: '/images/testimonial/04.webp',
+    companyLogoDark: '/images/testimonial/04-dark.webp',
+    message:
+      'From day one, this platform exceeded expectations. The customer support is outstanding and continuous updates keep bringing valuable features.'
   },
   {
-    name: 'Sofia Martinez',
-    role: 'Product Manager',
-    company: 'BrightBridge',
-    avatar: '/images/avatar/avatar-5.webp',
-    rating: 4.7,
-    content: 'Clean, responsive, and easy to customize. The Neural AI landing page is ideal for demos and user testing.'
+    id: '5',
+    avatar: '/images/avatar/5.webp',
+    fallback: 'PJ',
+    name: 'Praveen Juge',
+    designation: 'Senior Developer',
+    companyName: 'Cognitech Labs',
+    companyLogo: '/images/testimonial/05.webp',
+    companyLogoDark: '/images/testimonial/05-dark.webp',
+    message:
+      'As a developer, I appreciate the clean architecture and comprehensive docs. Integration was straightforward and it scales perfectly with our needs.'
+  },
+  {
+    id: '6',
+    avatar: '/images/avatar/6.webp',
+    fallback: 'J',
+    name: 'Julian',
+    designation: 'Senior Developer',
+    companyName: 'Tech Wave',
+    companyLogo: '/images/testimonial/06.webp',
+    message:
+      'Our marketing campaigns have reached new heights with this tool. The analytics insights are detailed and help us make data-driven decisions every day.'
   }
 ]
 
-const avatars = [
-  { src: '/images/avatar/avatar-1.webp', className: 'top-[50%] left-[8%]' },
-  { src: '/images/avatar/avatar-2.webp', className: 'top-[10%] left-[18%]' },
-  {
-    src: '/images/avatar/avatar-3.webp',
-    className: 'top-[50%] left-[28%] max-md:hidden'
-  },
-  { src: '/images/avatar/avatar-5.webp', className: 'top-[10%] left-[45%]' },
-  { src: '/images/avatar/avatar-6.webp', className: 'bottom-15 left-[40%]' },
-  {
-    src: '/images/avatar/avatar-4.webp',
-    className: 'bottom-15 left-[60%] max-md:hidden'
-  },
-  {
-    src: '/images/avatar/avatar-7.webp',
-    className: 'top-[37%] left-[66%] max-md:hidden'
-  },
-  { src: '/images/avatar/avatar-8.webp', className: 'top-[5%] left-[80%]' },
-  { src: '/images/avatar/avatar-9.webp', className: 'top-[60%] left-[88%]' }
-]
-
 const TestimonialsSection = () => {
-  return <Testimonials avatars={avatars} testimonials={testimonials} />
+  return <Testimonials testimonials={testimonialsData} />
 }
 
 export default TestimonialsSection

@@ -1,40 +1,65 @@
-import FAQ from '@/components/blocks/faq/faq'
+import FAQSection from '@/components/blocks/faq-section/faq-section'
 
-export const faqItems = [
+type FAQItem = {
+  question: string
+  answer: string
+}
+
+const faqData: FAQItem[] = [
   {
-    question: 'What is Neural and how does it work?',
+    question: 'What exactly is this ai agent?',
     answer:
-      'Neural is an AI-powered automation platform that helps businesses streamline their workflows using intelligent chatbots and AI agents. It connects to your existing tools, learns from interactions, and automates repetitive tasks like customer support, lead qualification, and data processing - all without requiring any coding skills.'
+      'This is your personal AI productivity agent that automates repetitive tasks, efficiently manages workflows, and helps you stay organised across all your essential tools.'
   },
   {
-    question: 'Which AI models does Neural support?',
+    question: 'Do I need to install any software?',
     answer:
-      'Neural integrates with leading AI models including ChatGPT (GPT-3.5 and GPT-4), Claude (Anthropic), Grok, and DeepSeek. You can switch between models based on your needs, or use multiple models simultaneously for different tasks to optimize performance and cost.'
+      'No installation required. Our AI agent is completely cloud-based and accessible through your web browser. Simply sign up, connect your tools, and start automating your workflows immediately.'
   },
   {
-    question: 'Is there a free plan available?',
+    question: 'How does this tool keep my data secure?',
     answer:
-      "Yes! Our Free plan includes 1 AI chatbot with 100 conversations per month, basic analytics, and email support. It's perfect for testing Neural and small projects. You can upgrade anytime as your needs grow, with no credit card required to start."
+      'We use enterprise-grade encryption (AES-256) for data at rest and in transit. All integrations use OAuth 2.0 authentication, and we never store your passwords. Your data is isolated and complies with GDPR and SOC 2 standards.'
   },
   {
-    question: 'How secure is my data with Neural?',
+    question: 'What kind of tasks can agent automate?',
     answer:
-      "We take security seriously. All data is encrypted with bank-level 256-bit SSL encryption both in transit and at rest. We never train AI models on your private data, and we're compliant with GDPR and SOC 2 standards. Your conversations and business information remain completely confidential."
+      'The agent can automate email follow-ups, meeting scheduling, data syncing between tools, report generation, lead qualification, content drafting, task assignments, and much more. It learns from your workflow patterns to suggest new automations.'
   },
   {
-    question: 'Can I integrate Neural with my existing tools?',
+    question: 'Can I use this tool for my team?',
     answer:
-      'Absolutely! Neural integrates seamlessly with popular platforms like Slack, Zapier, HubSpot, Salesforce, and many more. Our easy-to-use API and pre-built connectors let you set up integrations in minutes. If you need a custom integration, our Enterprise plan includes dedicated support.'
+      'Yes! Our Pro and Enterprise plans support team collaboration with shared workspaces, team-wide automations, role-based permissions, and centralized billing. Team members can create, share, and manage workflows together.'
   },
   {
-    question: 'What kind of support do you offer?',
+    question: 'Can I switch plans anytime?',
     answer:
-      'All plans include email support with responses within 24 hours. Premium and Enterprise plans get priority support with faster response times, live chat access, and dedicated account managers. We also provide comprehensive documentation, video tutorials, and a community forum for peer-to-peer help.'
+      'Absolutely! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and billing is prorated. If you upgrade, you only pay the difference for the remaining billing period.'
+  },
+  {
+    question: 'Do you offer a free trial?',
+    answer:
+      'Yes, we offer a 14-day free trial of our Pro plan with no credit card required. You get full access to all Pro features including 15 AI agents and 500 automated tasks to test the platform thoroughly.'
+  },
+  {
+    question: 'What happens if I exceed my task limit?',
+    answer:
+      'Once you reach your monthly limit, your automations will pause until your next billing cycle. You can upgrade anytime for more capacity. We send notifications at 80% and 95% usage to help you plan ahead.'
+  },
+  {
+    question: 'Can multiple team members use one account?',
+    answer:
+      'Each team member needs their own user account, but these can be grouped under a single team workspace (available on Pro and Enterprise plans). This ensures proper activity tracking, permissions, and personalized agent experiences for each user.'
+  },
+  {
+    question: 'How secure is my data?',
+    answer:
+      'Your data security is our top priority. We employ bank-level encryption, regular security audits, automated backups, and strict access controls. All our infrastructure is SOC 2 Type II certified and GDPR compliant.'
   }
 ]
 
-const FAQSection = () => {
-  return <FAQ faqItems={faqItems} />
+const FAQSectionPage = () => {
+  return <FAQSection faqs={faqData} />
 }
 
-export default FAQSection
+export default FAQSectionPage

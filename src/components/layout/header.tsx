@@ -1,86 +1,107 @@
-import { useState, useEffect } from 'react'
+'use client'
 
-import { HeroNavigation, HeroNavigationSmallScreen, type Navigation } from '@/components/layout/hero-navigation'
+import { useEffect, useState } from 'react'
 
-import { NeuralButton } from '@/components/ui/neural-button'
+import { COMPANY_INFO } from '@/consts'
+
+import { LogInIcon } from 'lucide-react'
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { SecondaryOrionButton } from '@/components/ui/orion-button'
+
+import ThemeToggle from '@/components/layout/theme-toggle'
+
+import { HeaderNavigation, HeaderNavigationSmallScreen, type Navigation } from '@/components/layout/header-navigation'
+
+import Logo from '@/components/logo'
 
 import { cn } from '@/lib/utils'
-
-import Neural from '@/assets/svg/neural'
 
 type HeaderProps = {
   navigationData: Navigation[]
   className?: string
+  pathname?: string
 }
 
-const Header = ({ navigationData, className }: HeaderProps) => {
-  const [currentPathname, setCurrentPathname] = useState('/')
+const Header = ({ navigationData, className, pathname: serverPathname }: HeaderProps) => {
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [pathname, setPathname] = useState(serverPathname || '/')
 
+  // Sync pathname with client-side navigation
   useEffect(() => {
-    // Set initial pathname
-    // eslint-disable-next-line
-    setCurrentPathname(window.location.pathname)
-
-    // Update pathname on navigation (for client-side routing)
-    const handleLocationChange = () => {
-      setCurrentPathname(window.location.pathname)
+    const updatePathname = () => {
+      setPathname(window.location.pathname)
     }
 
-    // Listen for popstate (browser back/forward)
-    window.addEventListener('popstate', handleLocationChange)
+    // Update on initial load
+    updatePathname()
 
-    // Listen for astro:page-load (Astro's client-side navigation)
-    document.addEventListener('astro:page-load', handleLocationChange)
+    // Listen for Astro page transitions
+    document.addEventListener('astro:page-load', updatePathname)
 
     return () => {
-      window.removeEventListener('popstate', handleLocationChange)
-      document.removeEventListener('astro:page-load', handleLocationChange)
+      document.removeEventListener('astro:page-load', updatePathname)
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0)
     }
 
-    // setCurrentPathname is stable and doesn't need to be in deps
+    window.addEventListener('scroll', handleScroll)
+    handleScroll()
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   return (
-    <header className={cn('fixed top-0 left-1/2 z-50 flex w-full -translate-x-1/2 justify-center', className)}>
-      <div className='mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8'>
-        <div
-          className={cn(
-            'relative mt-6 inline-flex w-full items-center justify-between gap-5 rounded-xl px-8 py-3 sm:mt-11',
-            'before:shadow-[inset_-0.4px_-0.4px_0.5px_0_#fff,inset_0.4px_0.4px_0.5px_0_#fff]',
-            'before:absolute before:inset-0 before:-z-1 before:size-full before:rounded-xl before:bg-linear-to-r before:from-white/25 before:to-white/15 before:backdrop-blur-lg'
-          )}
-        >
-          {/* Logo */}
-          <a href='/' className='flex items-center gap-3'>
-            <Neural />
-            <span className='text-xl font-semibold text-white'>Neural</span>
-          </a>
-          {/* Navigation */}
+    <header
+      className={cn(
+        'sticky top-0 z-50 h-16 w-full border-b px-4 transition-all duration-300 sm:px-6 lg:px-8',
+        {
+          'bg-card/75 shadow-xl backdrop-blur': isScrolled
+        },
+        className
+      )}
+    >
+      <div className='mx-auto flex h-full max-w-7xl items-center justify-between gap-4 border-x px-4 sm:px-6 lg:px-8'>
+        {/* Logo */}
+        <a href='/#home' aria-label={`${COMPANY_INFO.name} Home`}>
+          <Logo />
+        </a>
 
-          <HeroNavigation
-            navigationData={navigationData}
-            navigationClassName='max-md:hidden'
-            currentPathname={currentPathname}
-          />
+        {/* Navigation */}
+        <HeaderNavigation
+          navigationData={navigationData}
+          navigationClassName='[&_[data-slot="navigation-menu-list"]]:gap-1'
+          pathname={pathname}
+        />
 
-          <NeuralButton size='lg' className='max-md:hidden' asChild>
-            <a href='/login'>Login</a>
-          </NeuralButton>
+        {/* Actions */}
+        <div className='flex items-center gap-3'>
+          <ThemeToggle />
+          <SecondaryOrionButton size='lg' className='max-sm:hidden' asChild>
+            <a href='/register'>Sign up</a>
+          </SecondaryOrionButton>
 
-          {/* Navigation for small screens */}
-          <div className='flex gap-4 md:hidden'>
-            <NeuralButton size='lg'>
-              {' '}
-              <a href='/login'>Login</a>
-            </NeuralButton>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SecondaryOrionButton size='icon-lg' className='sm:hidden' asChild>
+                  <a href='/register'>
+                    <LogInIcon />
+                    <span className='sr-only'>register</span>
+                  </a>
+                </SecondaryOrionButton>
+              </TooltipTrigger>
+              <TooltipContent>register</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-            <HeroNavigationSmallScreen
-              navigationData={navigationData}
-              screenSize={767}
-              triggerClassName='md:hidden'
-              currentPathname={currentPathname}
-            />
-          </div>
+          <HeaderNavigationSmallScreen navigationData={navigationData} pathname={pathname} />
         </div>
       </div>
     </header>

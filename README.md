@@ -61,7 +61,6 @@
 - [Credits 🤘](#credits-)
 - [License ©](#license-)
 - [Useful Links 🎁](#useful-links-)
-- [pnpm: build scripts for `sharp` and `esbuild`](#pnpm-build-scripts-for-sharp-and-esbuild)
 - [Social Media :earth_africa:](#social-media-earth_africa)
 
 ---
@@ -147,25 +146,6 @@ These projects form the backbone of shadcn/studio, allowing us to build a powerf
 - [Shadcn IDE Extension](https://shadcnstudio.com/ide-extension)
 - [Shadcn Components](https://shadcnstudio.com/components)
 - [Shadcn Figma to Code](https://shadcnstudio.com/figma-plugin)
-
-## pnpm: build scripts for `sharp` and `esbuild`
-
-With **pnpm 9+**, install may show a warning that **build scripts were ignored** for packages such as **`sharp`** (image processing) and **`esbuild`**. That is a security feature: pnpm does not run arbitrary postinstall scripts until you allow them.
-
-- **If `pnpm build` / `astro build` works:** you can ignore the warning (Astro static builds often complete without those scripts).
-- **If you see errors about Sharp, missing native binaries, or broken image optimisation:** run:
-
-  ```bash
-  pnpm approve-builds
-  ```
-
-  Follow the prompts to approve the listed packages, then reinstall if needed:
-
-  ```bash
-  pnpm install
-  ```
-
-See also: [pnpm — approving dependency builds](https://pnpm.io/cli/approve-builds).
 
 ## Social Media :earth_africa:
 

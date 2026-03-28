@@ -6,6 +6,12 @@ export async function getAllPosts(): Promise<CollectionEntry<'blog'>[]> {
   return posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf())
 }
 
+export async function getFeaturedPosts(): Promise<CollectionEntry<'blog'>[]> {
+  const posts = await getAllPosts()
+
+  return posts.filter(post => post.data.featured === true)
+}
+
 export async function getAdjacentPosts(currentSlug: string): Promise<{
   newer: CollectionEntry<'blog'> | null
   older: CollectionEntry<'blog'> | null
@@ -45,4 +51,23 @@ export function calculateReadTime(text: string | undefined): number {
   const readTime = Math.ceil(words / wordsPerMinute)
 
   return readTime
+}
+
+export async function getRelatedPosts(
+  currentSlug: string,
+  currentCategory: string
+): Promise<CollectionEntry<'blog'>[]> {
+  const allPosts = await getAllPosts()
+
+  // Filter out current post
+  const otherPosts = allPosts.filter(post => post.data.slug !== currentSlug)
+
+  // Get posts from same category first
+  const sameCategoryPosts = otherPosts.filter(post => post.data.category === currentCategory)
+
+  // Get posts from other categories
+  const otherCategoryPosts = otherPosts.filter(post => post.data.category !== currentCategory)
+
+  // Combine and limit to 3 posts
+  return [...sameCategoryPosts, ...otherCategoryPosts].slice(0, 3)
 }

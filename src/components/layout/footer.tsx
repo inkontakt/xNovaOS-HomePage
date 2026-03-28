@@ -1,170 +1,140 @@
-import { GithubIcon, InstagramIcon, TwitterIcon, YoutubeIcon } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
+import { PrimaryOrionButton } from '@/components/ui/orion-button'
 
-import Neural from '@/assets/svg/neural'
+import Logo from '@/components/logo'
 
-import { Marquee } from '@/components/ui/marquee'
-import { MotionPreset } from '@/components/ui/motion-preset'
-import { Separator } from '../ui/separator'
+type FooterLink = {
+  title: string
+  href: string
+}
 
-const Footer = () => {
+type FooterSection = {
+  title: string
+  links: FooterLink[]
+}
+
+const footerData: FooterSection[] = [
+  {
+    title: 'Pages',
+    links: [
+      { title: 'Features', href: '/#features' },
+      { title: 'Use cases', href: '/#use-cases' },
+      { title: 'Testimonials', href: '/#testimonials' },
+      { title: 'Pricing', href: '/#pricing' },
+      { title: 'App Integration', href: '/app-integration' }
+    ]
+  },
+  {
+    title: 'Company',
+    links: [
+      { title: 'About Us', href: '#' },
+      { title: 'Careers', href: '#' },
+      { title: 'News', href: '#' },
+      { title: 'Media kit', href: '#' },
+      { title: 'Contact', href: '#' }
+    ]
+  },
+  {
+    title: 'Resources',
+    links: [
+      { title: 'Blog', href: '/blog' },
+      { title: 'Help Center', href: '#' },
+      { title: 'Tutorials', href: '#' },
+      { title: 'Api Docs', href: '#' },
+      { title: 'Community', href: '#' },
+      { title: 'Support', href: '#' }
+    ]
+  },
+  {
+    title: 'Social',
+    links: [
+      { title: 'X', href: '#' },
+      { title: 'LinkedIn', href: '#' },
+      { title: 'Facebook', href: '#' },
+      { title: 'Github', href: '#' },
+      { title: 'Product Hunt', href: '#' }
+    ]
+  },
+  {
+    title: 'Legal',
+    links: [
+      { title: 'Terms of Service', href: '#' },
+      { title: 'Privacy Policy', href: '#' },
+      { title: 'Cookie Policy', href: '#' },
+      { title: 'Licenses', href: '#' },
+      { title: 'Security', href: '#' },
+      { title: 'Accessibility', href: '#' }
+    ]
+  }
+]
+
+const Footer = ({ newsletter = true }: { newsletter?: boolean }) => {
   return (
-    <footer>
-      <MotionPreset
-        fade
-        blur
-        delay={0.2}
-        slide={{ direction: 'up', offset: 50 }}
-        transition={{ duration: 0.5 }}
-        className='mx-auto max-w-7xl p-6'
-      >
-        <div className='flex flex-col items-center gap-8 overflow-hidden rounded-3xl border-2 border-[#00B8DB]/20 bg-linear-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 px-4 py-16 md:px-24'>
-          <div className='flex max-w-143.5 flex-col items-center gap-6 px-4 py-2'>
-            <div className='relative'>
-              <div className='pointer-events-none absolute inset-y-0 left-0 z-1 w-15 bg-linear-to-r from-[#141D30] to-[#141D30]/0 max-md:hidden max-sm:w-15' />
-              <div className='pointer-events-none absolute inset-y-0 right-0 z-1 w-15 bg-linear-to-l from-[#1A2537] to-[#141D30]/0 max-md:hidden max-sm:w-15' />
+    <>
+      <Separator />
 
-              {/* Trusted by Logos */}
-              <Marquee pauseOnHover duration={20} reverse gap={2} className='*:items-center md:max-w-135.5'>
-                <img
-                  src='/images/brand-logo/um-logo.webp'
-                  alt='University of Mississippi'
-                  className='h-7.5 w-auto shrink-0 object-contain'
-                />
-                <img
-                  src='/images/brand-logo/star-helth-logo.webp'
-                  alt='Star Health'
-                  className='h-9 w-auto shrink-0 object-contain'
-                />
-                <img src='/images/brand-logo/dhl-logo.webp' alt='DHL' className='h-4 w-auto shrink-0 object-contain' />
-                <img
-                  src='/images/brand-logo/sense-arena-logo.webp'
-                  alt='Sense Arena'
-                  className='h-11 w-auto shrink-0 object-contain'
-                />
-                <img
-                  src='/images/brand-logo/shemaroo-logo.webp'
-                  alt='Shemaroo'
-                  className='h-10 w-auto shrink-0 object-contain'
-                />
-                <img
-                  src='/images/brand-logo/mercedes-benz-logo.webp'
-                  alt='Mercedes Benz'
-                  className='h-7.5 w-auto shrink-0 object-contain'
-                />
-              </Marquee>
-            </div>
-
-            <span className='text-center text-white/70'>More than 300+ Companies trusted one</span>
-          </div>
-          <Separator className='w-80! bg-transparent bg-linear-to-r from-transparent via-white to-transparent' />
-          <div className='grid gap-8 text-white sm:grid-cols-2 xl:grid-cols-4'>
-            {/* About Neural Column */}
-            <div className='flex flex-col items-start gap-4'>
-              <a href='/' className='flex items-center gap-3'>
-                <Neural />
-                <span className='text-xl font-semibold text-white'>Neural</span>
-              </a>
-              <p className='opacity-70'>
-                The features provided by AI Neural are powered by intelligent AI systems and designed for informational
-                purposes.
-              </p>
-              <div className='flex items-center gap-4'>
-                <a href='#' className='text-white/70 hover:text-white'>
-                  <GithubIcon className='size-5' />
-                </a>
-                <a href='#' className='text-white/70 hover:text-white'>
-                  <InstagramIcon className='size-5' />
-                </a>
-                <a href='#' className='text-white/70 hover:text-white'>
-                  <TwitterIcon className='size-5' />
-                </a>
-                <a href='#' className='text-white/70 hover:text-white'>
-                  <YoutubeIcon className='size-5' />
-                </a>
+      <footer className='px-4 sm:px-6 lg:px-8'>
+        <div className='mx-auto max-w-7xl space-y-8 border-x px-4 py-8 sm:px-6 sm:py-16 md:py-24 lg:px-8'>
+          {newsletter && (
+            <div className='grid grid-cols-1 items-center gap-4 lg:grid-cols-5 xl:gap-24'>
+              <div className='col-span-1 space-y-2 lg:col-span-3'>
+                <h6 className='text-2xl font-semibold'>Subscribe to our newsletter</h6>
+                <p className='text-muted-foreground'>
+                  Stay in the loop with the latest updates on AI productivity, automation tips, and new features.{' '}
+                  <br className='hidden lg:block' />
+                  One email a week no spam, just smart insights.
+                </p>
+              </div>
+              <div className='col-span-1 lg:col-span-2'>
+                <div className='flex justify-start gap-3 lg:justify-end'>
+                  <Input type='email' placeholder='Your Email' className='h-10 max-w-70' />
+                  <PrimaryOrionButton size='lg' className='rounded-lg'>
+                    Subscribe
+                  </PrimaryOrionButton>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Company Column */}
-            <div className='flex flex-col gap-3'>
-              <div className='text-lg font-medium'>Company</div>
-              <ul className='space-y-3'>
-                <li>
-                  <a href='/#home' className='opacity-70 transition-opacity duration-300 hover:opacity-100'>
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a href='/#features' className='opacity-70 transition-opacity duration-300 hover:opacity-100'>
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href='/#testimonials' className='opacity-70 transition-opacity duration-300 hover:opacity-100'>
-                    Testimonials
-                  </a>
-                </li>
-                <li>
-                  <a href='/#pricing' className='opacity-70 transition-opacity duration-300 hover:opacity-100'>
-                    Pricing
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Social Links Column */}
-            <div className='flex flex-col gap-3'>
-              <div className='text-lg font-medium'>Other Links</div>
-              <ul className='space-y-3'>
-                <li>
-                  <a href='/blog' className='opacity-70 transition-opacity duration-300 hover:opacity-100'>
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href='#' className='opacity-70 transition-opacity duration-300 hover:opacity-100'>
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href='#' className='opacity-70 transition-opacity duration-300 hover:opacity-100'>
-                    Terms & Conditions
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Download App Column */}
-            <div className='flex flex-col gap-3'>
-              <div className='mb-2 text-lg font-medium'>Download App</div>
-
-              <a
-                href='#'
-                target='_blank'
-                className='flex w-fit items-center gap-4 rounded-lg border-2 border-[#00B8DB]/20 bg-linear-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 px-4 py-3 shadow-[0_26.941px_53.881px_-12.931px_rgba(0,184,219,0.10)]'
-              >
-                <img src='/images/brand-logo/apple-icon.webp' alt='App Store' className='size-8.5 invert' />
-                <div className='flex flex-col items-start'>
-                  <p className='text-xs'>Download on the</p>
-                  <p className='text-base font-medium opacity-90'>App Store</p>
-                </div>
-              </a>
-
-              <a
-                href='#'
-                target='_blank'
-                className='flex w-fit items-center gap-4 rounded-lg border-2 border-[#00B8DB]/20 bg-linear-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 px-4 py-3 shadow-[0_26.941px_53.881px_-12.931px_rgba(0,184,219,0.10)]'
-              >
-                <img src='/images/brand-logo/google-play-icon.webp' alt='Google Play' className='size-8.5' />
-                <div className='flex flex-col items-start'>
-                  <p className='text-xs'>Download on the</p>
-                  <p className='text-base font-medium opacity-90'>Google Play</p>
-                </div>
-              </a>
-            </div>
+          <div className='grid grid-flow-row grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5'>
+            {footerData.map((section, index) => (
+              <div key={index} className='flex flex-col gap-5'>
+                <div className='text-lg font-medium'>{section.title}</div>
+                <ul className='text-muted-foreground space-y-3'>
+                  {section.links.map((link, linkIndex) => (
+                    <li key={linkIndex}>
+                      <a
+                        href={link.href}
+                        className='text-muted-foreground hover:text-foreground transition-colors duration-300'
+                      >
+                        {link.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
-      </MotionPreset>
-    </footer>
+
+        <div className='mx-auto max-w-7xl border-x'>
+          <Separator />
+          <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6 p-4 sm:px-6 lg:px-8'>
+            <a href='/#home'>
+              <Logo />
+            </a>
+            <p className='text-muted-foreground font-light'>
+              {`©${new Date().getFullYear()}`}{' '}
+              <a href='/#home' className='link-animated'>
+                Orion
+              </a>
+              , Made with passion and creativity.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </>
   )
 }
 

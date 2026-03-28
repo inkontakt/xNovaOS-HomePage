@@ -1,55 +1,26 @@
-import CTA from '@/components/blocks/cta/cta'
+import CTA from '@/components/blocks/cta-section/cta-section'
 
-export const logoData = [
+const ctaStats = [
   {
-    image: '/images/brand-logo/webflow-icon-circle.webp',
-    alt: 'Webflow',
-    size: 'size-15'
+    number: 100,
+    suffix: '+',
+    description: 'Businesses are automating workflows to improve efficiency and productivity.'
   },
   {
-    image: '/images/brand-logo/netflix-icon-circle.webp',
-    alt: 'Netflix',
-    size: 'size-12'
+    number: 1,
+    pointNumber: 42,
+    suffix: 'Million+',
+    description: 'Tasks executed automatically every week without any issues.'
   },
   {
-    image: '/images/brand-logo/stackoverflow-icon-circle.webp',
-    alt: 'Stack Overflow',
-    size: 'size-12.5'
-  },
-  {
-    image: '/images/brand-logo/shopify-icon-circle.webp',
-    alt: 'Shopify',
-    size: 'size-11'
-  },
-  {
-    image: '/images/brand-logo/mailchimp-icon-circle.webp',
-    alt: 'Mailchimp',
-    size: 'size-9.5'
-  },
-  {
-    image: '/images/brand-logo/paypal-icon-circle.webp',
-    alt: 'PayPal',
-    size: 'size-15'
-  },
-  {
-    image: '/images/brand-logo/airbnb-icon-circle.webp',
-    alt: 'Airbnb',
-    size: 'size-12.5'
-  },
-  {
-    image: '/images/brand-logo/huawei-icon-circle.webp',
-    alt: 'Huawei',
-    size: 'size-15'
-  },
-  {
-    image: '/images/brand-logo/dropbox-icon-circle.webp',
-    alt: 'Dropbox',
-    size: 'size-15'
+    number: 98,
+    suffix: '%',
+    description: 'Significant reduction in manual admin time per user achieved.'
   }
 ]
 
 const CTASection = () => {
-  return <CTA logos={logoData} />
+  return <CTA stats={ctaStats} />
 }
 
 export default CTASection

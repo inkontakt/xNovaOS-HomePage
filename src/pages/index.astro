@@ -1,53 +1,47 @@
 ---
-import BlankLayout from '@/layouts/BlankLayout.astro'
+import Layout from '@/layouts/Layout.astro'
+import HeroSection from '@/components/sections/hero-section'
+import FeaturesSection from '@/components/sections/features-section'
+import WorksFeaturesSectionPage from '@/components/sections/works-features-section'
+import UseCasesSection from '@/components/sections/use-cases-section'
+import TestimonialsSection from '@/components/sections/testimonials-section'
+import PricingSectionPage from '@/components/sections/pricing-section'
+import FAQSectionPage from '@/components/sections/faq-section'
+import CTASection from '@/components/sections/cta-section'
+import FooterSection from '@/components/sections/footer-section'
 
-const description =
-  'xNovaOS – die öffentliche Startseite ist in Arbeit. Wir melden uns, sobald es mehr zu zeigen gibt.'
-const keywords = 'xNovaOS, coming soon, operating system'
+// Page-specific SEO configuration
+const pageTitle = ''
+const pageDescription =
+  'Automate routine tasks, connect your tools, and let your AI agent coordinate workflows so you can focus on strategy, not busywork. Boost productivity with intelligent automation.'
+const pageKeywords =
+  'AI agent, workflow automation, task automation, productivity tools, AI productivity, workflow management, business automation, AI assistant, smart automation, team productivity, AI workflow, automation platform, intelligent agent, work automation, productivity automation'
 
+// Structured data for better SEO
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'xNovaOS',
-  url: Astro.site?.toString(),
-  description
+  '@graph': [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${Astro.site}#website`,
+      name: 'Orion',
+      description: pageDescription,
+      url: `${Astro.site}`,
+      inLanguage: 'en-US'
+    }
+  ]
 }
 ---
 
-<BlankLayout
-  lang='de'
-  pageTitle='xNovaOS – Demnächst'
-  description={description}
-  keywords={keywords}
-  schema={schema}
->
-  <section
-    class='relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-gray-950 px-6 py-20'
-  >
-    <div
-      class='pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(56,189,248,0.22),transparent)]'
-    >
-    </div>
-    <div
-      class='pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_100%_50%,rgba(99,102,241,0.12),transparent)]'
-    >
-    </div>
-
-    <div class='relative z-10 max-w-lg text-center'>
-      <p class='text-sm font-medium tracking-[0.25em] text-sky-400/90 uppercase'>xNovaOS</p>
-      <h1 class='mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl'>Demnächst</h1>
-      <p class='mt-6 text-lg leading-relaxed text-white/65'>
-        Wir bauen gerade an dieser Seite. Schau später wieder vorbei – oder nutze vorerst die
-        vollständige Template-Demo.
-      </p>
-      <p class='mt-8'>
-        <a
-          href='/landing/'
-          class='inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-medium text-white/90 transition hover:border-sky-500/40 hover:bg-sky-500/10 hover:text-white'
-        >
-          Template-Demo ansehen
-        </a>
-      </p>
-    </div>
-  </section>
-</BlankLayout>
+<Layout title={pageTitle} description={pageDescription} keywords={pageKeywords} schema={schema}>
+  <HeroSection client:load />
+  <FeaturesSection client:load />
+  <WorksFeaturesSectionPage client:load />
+  <UseCasesSection client:load />
+  <TestimonialsSection client:load />
+  <PricingSectionPage client:load />
+  <FAQSectionPage client:load />
+  <CTASection client:load />
+  <FooterSection newsletter={true} client:load />
+</Layout>

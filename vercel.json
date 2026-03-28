@@ -3,14 +3,6 @@
   "git": {
     "deploymentEnabled": false
   },
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "xnova-os.info" }],
-      "destination": "https://www.xnova-os.info/:path*",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

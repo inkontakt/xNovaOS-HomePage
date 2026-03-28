@@ -43,7 +43,9 @@ build/
 # misc
 .DS_Store
 *.pem
-*.zip
+
+# Pro template archives (large; keep outside git)
+shadcn-*.zip
 
 # jetbrains setting folder
 .idea/

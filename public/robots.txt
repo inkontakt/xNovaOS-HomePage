@@ -19,7 +19,7 @@ Allow: /*.css$
 Allow: /*.js$
 
 # Sitemap location
-Sitemap: https://www.xnova-os.info/sitemap-index.xml
+Sitemap: https://yourdomain.com/sitemap-index.xml
 
 # Specific bot configurations
 User-agent: Googlebot

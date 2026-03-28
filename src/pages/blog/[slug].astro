@@ -1,8 +1,13 @@
 ---
 import Layout from '@/layouts/Layout.astro'
+import TOCSidebar from '@/components/astro/TOCSidebar.astro'
+import BlogCTASection from '@/components/sections/blog-cta-section'
+import FooterSection from '@/components/sections/footer-section'
+import RelatedBlogSection from '@/components/blog/related-blog-section'
+import { AuthorMetadata } from '@/components/blog/AuthorAvatar'
+import AISummaryButtons from '@/components/blog/ai-summary-buttons'
 
-import { Separator } from '@/components/ui/separator'
-
+import { SecondaryOrionButton } from '@/components/ui/orion-button'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,15 +16,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import { getAllPosts, getAdjacentPosts, getTOCHeadings, calculateReadTime, getRelatedPosts } from '@/lib/data-utils'
 
-import { getAllPosts, getAdjacentPosts, calculateReadTime } from '@/lib/data-utils'
 import { render } from 'astro:content'
-import { GlassButton } from '@/components/ui/glass-button'
-import { MotionPreset } from '@/components/ui/motion-preset'
-
-import { AuthorMetadata } from '@/components/blog/author-avatar'
-import FAQSection from '@/components/sections/faq-section'
-import RelatedBlogSection from '@/components/blog/related-blog-section/related-blog-section'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 
 export async function getStaticPaths() {
@@ -31,16 +30,36 @@ export async function getStaticPaths() {
 }
 
 const post = Astro.props
-const currentPostSlug = post.data.slug
+const currentPostId = post.data.slug
 
 // Render post content
 const { Content } = await render(post)
 
-const navigation = await getAdjacentPosts(currentPostSlug)
+// Get navigation and TOC
+const navigation = await getAdjacentPosts(currentPostId)
+const tocHeadings = await getTOCHeadings(currentPostId)
 
 // Calculate read time dynamically from post body
 const postContent = post.body || ''
 const readTime = calculateReadTime(postContent)
+
+// Build full post URL for AI summary
+const postUrl = `${Astro.site}blog/${post.data.slug}/`
+
+// Get related posts
+const relatedPostsData = await getRelatedPosts(currentPostId, post.data.category)
+const relatedPosts = relatedPostsData.map(p => ({
+  slug: p.data.slug,
+  title: p.data.title,
+  description: p.data.description,
+  image: p.data.imageUrl || '/images/placeholder.jpg',
+  category: p.data.category,
+  readTime: `${calculateReadTime(p.body || '')} min`,
+  author: {
+    name: p.data.author,
+    picture: p.data.avatarUrl || '/images/avatar-placeholder.jpg'
+  }
+}))
 
 // Comprehensive Schema.org structured data
 const schema = {
@@ -137,28 +156,6 @@ const schema = {
     }
   ]
 }
-
-const allPosts = await getAllPosts()
-const sameCategoryPosts = allPosts.filter(
-  p => p.data.category === post.data.category && p.data.slug !== currentPostSlug
-)
-const otherCategoryPosts = allPosts.filter(
-  p => p.data.category !== post.data.category && p.data.slug !== currentPostSlug
-)
-const relatedPosts = [...sameCategoryPosts, ...otherCategoryPosts].slice(0, 3).map(post => ({
-  slug: post.data.slug,
-  title: post.data.title,
-  description: post.data.description,
-  imageUrl: post.data.imageUrl,
-  imageAlt: post.data.imageAlt || post.data.title,
-  pubDate: post.data.pubDate,
-  author: post.data.author,
-  avatarUrl: post.data.avatarUrl || '',
-  category: post.data.category,
-  readTime: calculateReadTime(post.body || ''),
-  featured: post.data.featured,
-  tags: post.data.tags
-}))
 ---
 
 <Layout
@@ -171,208 +168,122 @@ const relatedPosts = [...sameCategoryPosts, ...otherCategoryPosts].slice(0, 3).m
   schema={schema}
   keywords={post.data.tags?.join(', ')}
 >
-  <div class='pt-22 sm:pt-27'>
-    <section class='relative py-8 sm:py-16 lg:py-24'>
-      <div class='mx-auto max-w-7xl px-4 text-white sm:px-6 lg:px-8'>
-        <div class='text-white'>
-          <MotionPreset client:load fade slide blur transition={{ duration: 0.5 }} className='mb-6'>
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href='/' className='text-white/70 hover:text-white'> Home </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className='text-white/70' />
-                <BreadcrumbItem>
-                  <BreadcrumbLink href='/blog' className='text-white/70 hover:text-white'> Blog </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className='text-white/70' />
-                <BreadcrumbItem>
-                  <BreadcrumbPage className='text-white'>{post.data.title}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </MotionPreset>
+  <section class='relative -mt-15.75 flex flex-col pt-15.75'>
+    <div class='px-4 sm:px-6 lg:px-8'>
+      <div class='mx-auto w-full max-w-7xl border-x'>
+        <div class='grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[400px_1fr]'>
+          <!-- Left Sidebar - TOC -->
+          <aside class='bg-muted hidden px-4 py-8 sm:py-16 md:px-5 lg:block lg:py-24'>
+            <TOCSidebar headings={tocHeadings} />
+          </aside>
 
-          <div class='grid grid-cols-2 items-center gap-16 max-lg:grid-cols-1'>
-            <div>
-              <MotionPreset
-                client:load
-                fade
-                slide
-                blur
-                transition={{ duration: 0.5 }}
-                delay={0.3}
-                className='mb-6 text-2xl font-semibold text-white md:text-3xl lg:text-4xl'
-              >
-                <h1>{post.data.title}</h1>
-              </MotionPreset>
+          <!-- Main Content -->
+          <article class='space-y-8 px-4 py-8 sm:py-16 md:space-y-12 md:px-6 lg:space-y-16 lg:px-8 lg:py-24'>
+            <div class='space-y-6'>
+              <!-- Breadcrumb -->
+              <Breadcrumb className='mb-6' client:load>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href='/'>Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href='/blog'>Blog</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className='text-foreground'>{post.data.title}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
 
-              <MotionPreset
-                client:load
-                fade
-                blur
-                slide
-                delay={0.5}
-                transition={{ duration: 0.5 }}
-                className='text-xl text-white/70'
-              >
-                <p>{post.data.description}</p>
-              </MotionPreset>
+              <!-- Title -->
+              <h1 class='text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl'>{post.data.title}</h1>
 
-              <MotionPreset client:load fade blur delay={0.6} transition={{ duration: 0.5 }} className='my-6'>
-                <Separator className='bg-white/40' />
-              </MotionPreset>
-
-              <div class='flex flex-wrap items-center justify-between gap-2'>
-                <MotionPreset
-                  client:load
-                  fade
-                  blur
-                  slide={{ direction: 'down', offset: 70 }}
-                  delay={0.6}
-                  transition={{ duration: 0.5 }}
-                  className='flex items-center gap-2'
-                >
-                  <AuthorMetadata author={post.data.author} avatarUrl={post.data.avatarUrl} client:load />
-                  <div class='flex flex-col'>
-                    <span class='text-sm text-white/70'>Written by</span>
-                    <span>{post.data.author}</span>
+              <!-- Author & Read Time -->
+              <div class='flex flex-wrap items-center justify-between gap-6'>
+                <div class='flex items-center gap-2'>
+                  <AuthorMetadata client:load avatarUrl={post.data.avatarUrl} author={post.data.author} />
+                  <div class='flex flex-col gap-1'>
+                    <span class='text-muted-foreground text-sm'>Written by</span>
+                    <span class='text-sm font-medium'>{post.data.author}</span>
                   </div>
-                </MotionPreset>
-
-                <MotionPreset
-                  client:load
-                  fade
-                  blur
-                  slide={{ direction: 'down', offset: 70 }}
-                  delay={0.7}
-                  transition={{ duration: 0.5 }}
-                  className='flex flex-col'
-                >
-                  <span class='text-sm text-white/70'>Read Time</span>
-                  <span>{readTime} min read</span>
-                </MotionPreset>
-
-                <MotionPreset
-                  client:load
-                  fade
-                  blur
-                  slide={{ direction: 'down', offset: 70 }}
-                  delay={0.8}
-                  transition={{ duration: 0.5 }}
-                  className='flex flex-col'
-                >
-                  <span class='text-sm text-white/70'>Posted on</span>
-                  <span>
-                    {
-                      new Date(post.data.pubDate ?? '').toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: '2-digit'
-                      })
-                    }
-                  </span>
-                </MotionPreset>
+                </div>
+                <div class='flex flex-col'>
+                  <span class='text-muted-foreground text-xs'>Read time</span>
+                  <span class='text-sm font-medium'>{readTime} min</span>
+                </div>
               </div>
             </div>
 
-            <MotionPreset
-              client:load
-              fade
-              slide={{ direction: 'right', offset: 50 }}
-              blur
-              transition={{ duration: 0.5 }}
-              delay={0.3}
-            >
-              <img
-                src={post.data.imageUrl}
-                alt={post.data.title}
-                class='mx-auto mb-8 rounded-xl border border-white/20'
-              />
-            </MotionPreset>
-          </div>
-        </div>
+            <!-- Hero Image -->
+            {
+              post.data.imageUrl && (
+                <div class='overflow-hidden rounded-lg'>
+                  <img src={post.data.imageUrl} alt={post.data.title} class='w-full object-cover' />
+                </div>
+              )
+            }
 
-        <MotionPreset client:load fade blur delay={0.7} transition={{ duration: 0.8 }}>
-          <article
-            id='content'
-            class='prose dark:prose-invert max-w-none'
-            itemscope
-            itemtype='https://schema.org/BlogPosting'
-          >
-            <meta itemprop='headline' content={post.data.title} />
-            <meta itemprop='description' content={post.data.description} />
-            <meta itemprop='datePublished' content={post.data.pubDate} />
-            <meta itemprop='author' content={post.data.author} />
-            <div itemprop='articleBody'>
+            <!-- AI Summary Buttons -->
+            <AISummaryButtons postTitle={post.data.title} postUrl={postUrl} client:load />
+
+            <!-- MDX Content -->
+            <div class='prose dark:prose-invert prose-neutral max-w-none space-y-4'>
               <Content />
             </div>
-          </article>
-        </MotionPreset>
 
-        <div class='flex items-center justify-between gap-4 pt-16'>
-          {
-            navigation.older ? (
-              <GlassButton client:load className='px-3'>
-                <a href={`/blog/${navigation.older.data.slug}`} class='group flex items-center gap-2'>
-                  <ChevronLeftIcon className='transition-transform duration-300 group-hover:-translate-x-1' />
-                  Previous Post
-                </a>
-              </GlassButton>
-            ) : (
-              <GlassButton client:load disabled className='px-3'>
-                <ChevronLeftIcon />
-                Previous Post
-              </GlassButton>
-            )
-          }
-          {
-            navigation.newer ? (
-              <GlassButton client:load className='px-3'>
-                <a href={`/blog/${navigation.newer.data.slug}`} class='flex items-center gap-2'>
-                  Next Post
-                  <ChevronRightIcon className='transition-transform duration-300 group-hover:translate-x-1' />
-                </a>
-              </GlassButton>
-            ) : (
-              <GlassButton client:load disabled className='px-3'>
-                Next Post
-                <ChevronRightIcon />
-              </GlassButton>
-            )
-          }
+            <!-- Navigation -->
+            <div class='mt-8 flex items-center justify-between gap-4 md:mt-12 lg:mt-16'>
+              {
+                navigation.older ? (
+                  <a href={`/blog/${navigation.older.data.slug}`}>
+                    <SecondaryOrionButton size='lg' client:load>
+                      <ChevronLeftIcon className='size-4' />
+                      <span>Previous post</span>
+                    </SecondaryOrionButton>
+                  </a>
+                ) : (
+                  <SecondaryOrionButton size='lg' disabled client:load>
+                    <ChevronLeftIcon className='size-4' />
+                    <span>Previous post</span>
+                  </SecondaryOrionButton>
+                )
+              }
+
+              {
+                navigation.newer ? (
+                  <a href={`/blog/${navigation.newer.data.slug}`}>
+                    <SecondaryOrionButton size='lg' client:load>
+                      <span>Next post</span>
+                      <ChevronRightIcon className='size-4' />
+                    </SecondaryOrionButton>
+                  </a>
+                ) : (
+                  <SecondaryOrionButton size='lg' disabled client:load>
+                    <span>Next post</span>
+                    <ChevronRightIcon className='size-4' />
+                  </SecondaryOrionButton>
+                )
+              }
+            </div>
+          </article>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Background Decoration -->
-      <MotionPreset
-        client:load
-        fade
-        slide={{ direction: 'left', offset: 100 }}
-        delay={0.9}
-        transition={{ duration: 0.5 }}
-        className='absolute top-[10%] -left-[20%] -z-1 w-full opacity-50 md:w-[80%] xl:w-1/2'
-      >
-        <img src='/images/bg-glow.webp' alt='Background decoration' class='rotate-150' />
-      </MotionPreset>
-      <MotionPreset
-        client:load
-        fade
-        slide={{ direction: 'right', offset: 100 }}
-        delay={0.9}
-        transition={{ duration: 0.5 }}
-        className='absolute -right-[30%] bottom-[10%] -z-1 w-full opacity-50 md:w-[80%] xl:w-1/2'
-      >
-        <img src='/images/bg-glow.webp' alt='Background decoration' class='rotate-150' />
-      </MotionPreset>
-    </section>
+  <!-- Related Blog Section -->
+  <RelatedBlogSection posts={relatedPosts} client:load />
 
-    <!-- Releated Post -->
-    <RelatedBlogSection posts={relatedPosts} client:load />
-    <!-- Faq -->
-    <FAQSection client:load />
-  </div>
+  <!-- CTA Section -->
+  <BlogCTASection client:load />
+
+  <!-- Footer -->
+  <FooterSection newsletter={false} client:load />
+
   <script>
+    // KaTeX support
     if (document.querySelector('.katex')) {
       if (!document.querySelector('link[href*="katex.min.css"]')) {
         const link = document.createElement('link')
@@ -381,5 +292,53 @@ const relatedPosts = [...sameCategoryPosts, ...otherCategoryPosts].slice(0, 3).m
         document.head.appendChild(link)
       }
     }
+
+    // Code block copy button functionality
+    function addCopyButtons() {
+      const codeBlocks = document.querySelectorAll<HTMLPreElement>('.prose pre')
+
+      codeBlocks.forEach((pre: HTMLPreElement) => {
+        // Skip if button already exists
+        if (pre.querySelector('.copy-button')) return
+
+        const button = document.createElement('button')
+        button.className =
+          "copy-button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 gap-1.5 px-3 has-[>svg]:px-2.5 bg-primary/10 text-primary hover:bg-primary/90 hover:text-primary-foreground absolute top-2 right-4 h-5 rounded-full"
+        button.innerHTML = `
+          <svg class="copy-icon size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          <span class="copy-text">Copy</span>
+          <svg class="check-icon size-3.5 hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <span class="copied-text hidden">Copied</span>
+        `
+
+        button.addEventListener('click', async () => {
+          const code = pre.querySelector('code')
+          if (!code) return
+
+          const text = code.textContent || ''
+          await navigator.clipboard.writeText(text)
+
+          // Show copied state
+          button.querySelector('.copy-icon')?.classList.add('hidden')
+          button.querySelector('.copy-text')?.classList.add('hidden')
+          button.querySelector('.check-icon')?.classList.remove('hidden')
+          button.querySelector('.copied-text')?.classList.remove('hidden')
+
+          // Reset after 2 seconds
+          setTimeout(() => {
+            button.querySelector('.copy-icon')?.classList.remove('hidden')
+            button.querySelector('.copy-text')?.classList.remove('hidden')
+            button.querySelector('.check-icon')?.classList.add('hidden')
+            button.querySelector('.copied-text')?.classList.add('hidden')
+          }, 2000)
+        })
+
+        pre.style.position = 'relative'
+        pre.appendChild(button)
+      })
+    }
+
+    // Run on page load
+    document.addEventListener('astro:page-load', addCopyButtons)
   </script>
 </Layout>

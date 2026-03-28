@@ -17,8 +17,7 @@
   X-DNS-Prefetch-Control: on
 
   # NOTE: COOP/CORP/COEP removed — they break typical Astro/Vite chunk loading (scripts without
-  # matching CORP headers → blocked → blank dark page). Re-add only if you know you need
-  # crossOriginIsolated and serve all assets with correct CORP.
+  # matching CORP headers → blocked → blank dark page). Re-add only if you need crossOriginIsolated.
 
 # HTML pages - always fresh, enable revalidation
 /*.html
