@@ -16,10 +16,9 @@
   # Performance & SEO
   X-DNS-Prefetch-Control: on
 
-  # Modern browser features
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin
-  Cross-Origin-Embedder-Policy: require-corp
+  # NOTE: COOP/CORP/COEP removed — they break typical Astro/Vite chunk loading (scripts without
+  # matching CORP headers → blocked → blank dark page). Re-add only if you know you need
+  # crossOriginIsolated and serve all assets with correct CORP.
 
 # HTML pages - always fresh, enable revalidation
 /*.html

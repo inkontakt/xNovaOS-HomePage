@@ -41,6 +41,14 @@ const seoProps = Astro.props as Props
     </style>
   </head>
   <body class='flex min-h-full w-full flex-auto flex-col'>
+    <noscript>
+      <div
+        style='padding:1.5rem;font-family:system-ui,sans-serif;background:#030712;color:#f9fafb;'
+      >
+        <p><strong>JavaScript ist deaktiviert oder blockiert.</strong></p>
+        <p>Diese Vorlage braucht JavaScript für die Inhalte. Bitte JS aktivieren oder die Seite in den Entwicklertools prüfen (Konsole / Netzwerk, z. B. fehlende <code>/_astro/*.js</code>).</p>
+      </div>
+    </noscript>
     <div class='flex flex-col'>
       <HeaderSection client:load />
 
