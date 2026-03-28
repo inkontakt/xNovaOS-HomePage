@@ -6,6 +6,7 @@ import { ClientRouter } from 'astro:transitions'
 import HeadSeo from '@/layouts/HeadSeo.astro'
 
 interface Props {
+  pageTitle?: string
   title?: string
   description?: string
   image?: string
@@ -17,13 +18,15 @@ interface Props {
   noindex?: boolean
   nofollow?: boolean
   schema?: Record<string, any>
+  lang?: string
 }
 
-const seoProps = Astro.props as Props
+const props = Astro.props as Props
+const { lang = 'en', ...seoProps } = props
 ---
 
 <!doctype html>
-<html lang='en'>
+<html lang={lang}>
   <head>
     <HeadSeo {...seoProps} />
     <ClientRouter />

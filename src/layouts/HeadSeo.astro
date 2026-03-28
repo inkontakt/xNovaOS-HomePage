@@ -2,6 +2,8 @@
 import { SITE_METADATA } from '@/consts'
 
 interface Props {
+  /** If set, used as the full document title (no “Demo: …” prefix). */
+  pageTitle?: string
   title?: string
   description?: string
   image?: string
@@ -17,6 +19,7 @@ interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const {
+  pageTitle,
   title,
   description,
   image,
@@ -31,7 +34,8 @@ const {
 } = Astro.props
 
 // Use site metadata defaults if not provided
-const finalTitle = title ? `Demo: ${title} | Neural | Shadcn Studio` : SITE_METADATA.title.default
+const finalTitle =
+  pageTitle ?? (title ? `Demo: ${title} | Neural | Shadcn Studio` : SITE_METADATA.title.default)
 const finalDescription = description || SITE_METADATA.description
 const finalKeywords = keywords || SITE_METADATA.keywords.join(', ')
 const finalImage = image || SITE_METADATA.openGraph.images[0].url
