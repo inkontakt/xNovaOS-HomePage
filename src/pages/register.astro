@@ -1,0 +1,11 @@
+---
+import RegisterComponent from '@/components/auth/register/register-component'
+import BlankLayout from '@/layouts/BlankLayout.astro'
+
+// Page-specific SEO configuration
+const pageTitle = 'Neural AI - Register Page'
+---
+
+<BlankLayout title={pageTitle}>
+  <RegisterComponent client:load />
+</BlankLayout>

@@ -1,0 +1,27 @@
+<!-- Available h3 headings: Added, Fixed, Updated, Removed, Deprecated -->
+
+# Changelog
+
+All notable changes to this template will be documented in this file
+
+## v1.0.0 (2026-02-02)
+
+### Added
+
+- Initial release
+- Contains following sections
+  - Header
+  - Hero Section
+  - Portfolio
+  - Services
+  - About Me
+  - Experience
+  - Projects
+  - Testimonials
+  - Footer
+  - Contact Form
+  - Blog Section
+  - Blog Detail Page
+- Responsive Design
+- Smooth Scrolling
+- SEO Optimization

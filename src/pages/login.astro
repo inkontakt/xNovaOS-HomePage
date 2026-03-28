@@ -1,0 +1,11 @@
+---
+import LoginComponent from '@/components/auth/login/login-component'
+import BlankLayout from '@/layouts/BlankLayout.astro'
+
+// Page-specific SEO configuration
+const pageTitle = 'Neural AI - Login Page'
+---
+
+<BlankLayout title={pageTitle}>
+  <LoginComponent client:load />
+</BlankLayout>

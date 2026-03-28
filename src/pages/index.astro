@@ -1,0 +1,50 @@
+---
+import ChatBot from '@/components/blocks/chatbot/chatbot'
+import Features from '@/components/blocks/features/features'
+import HeroSection from '@/components/blocks/hero-section/hero-section'
+import AboutAppSection from '@/components/sections/about-app-section'
+import SocialProofSection from '@/components/sections/social-proof-section'
+import TestimonialsSection from '@/components/sections/testimonials-section'
+import CTASection from '@/components/sections/cta-section'
+import PricingSection from '@/components/sections/pricing-section'
+import Layout from '@/layouts/Layout.astro'
+import FAQSection from '@/components/sections/faq-section'
+
+// Page-specific SEO configuration
+
+const pageDescription =
+  'Neural is a cutting-edge AI landing page platform offering intelligent solutions for businesses. Experience next-generation artificial intelligence technology with our modern, responsive, and SEO-optimized interface.'
+const pageKeywords =
+  'AI landing page, artificial intelligence, machine learning, AI platform, neural network, AI solutions, business AI, AI technology, intelligent systems, AI-powered platform, next.js AI, shadcn UI, modern AI interface, responsive AI platform, SEO optimized'
+
+// Structured data for better SEO
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Neural AI Landing Page',
+  description: pageDescription,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD'
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'Your Company Name'
+  }
+}
+---
+
+<Layout description={pageDescription} keywords={pageKeywords} schema={schema}>
+  <HeroSection client:load />
+  <Features client:load />
+  <SocialProofSection client:load />
+  <AboutAppSection client:load />
+  <CTASection client:load />
+  <ChatBot client:load />
+  <TestimonialsSection client:load />
+  <PricingSection client:load />
+  <FAQSection client:load />
+</Layout>

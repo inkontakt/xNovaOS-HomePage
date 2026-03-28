@@ -1,0 +1,385 @@
+---
+import Layout from '@/layouts/Layout.astro'
+
+import { Separator } from '@/components/ui/separator'
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
+
+import { getAllPosts, getAdjacentPosts, calculateReadTime } from '@/lib/data-utils'
+import { render } from 'astro:content'
+import { GlassButton } from '@/components/ui/glass-button'
+import { MotionPreset } from '@/components/ui/motion-preset'
+
+import { AuthorMetadata } from '@/components/blog/author-avatar'
+import FAQSection from '@/components/sections/faq-section'
+import RelatedBlogSection from '@/components/blog/related-blog-section/related-blog-section'
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts()
+  return posts.map(post => ({
+    params: { slug: post.data.slug },
+    props: post
+  }))
+}
+
+const post = Astro.props
+const currentPostSlug = post.data.slug
+
+// Render post content
+const { Content } = await render(post)
+
+const navigation = await getAdjacentPosts(currentPostSlug)
+
+// Calculate read time dynamically from post body
+const postContent = post.body || ''
+const readTime = calculateReadTime(postContent)
+
+// Comprehensive Schema.org structured data
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    // BlogPosting schema
+    {
+      '@type': 'BlogPosting',
+      '@id': `${Astro.site}blog/${post.data.slug}/#article`,
+      headline: post.data.title,
+      description: post.data.description,
+      image: {
+        '@type': 'ImageObject',
+        url: post.data.imageUrl ? new URL(post.data.imageUrl, Astro.site).toString() : undefined,
+        width: 1200,
+        height: 630
+      },
+      datePublished: post.data.pubDate,
+      dateModified: post.data.pubDate,
+      author: {
+        '@type': 'Person',
+        name: post.data.author
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Shadcn Studio',
+        logo: {
+          '@type': 'ImageObject',
+          url: new URL('/images/site-logo.png', Astro.site).toString()
+        }
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${Astro.site}blog/${post.data.slug}/`
+      },
+      keywords: post.data.tags?.join(', '),
+      articleSection: post.data.category,
+      inLanguage: 'en-US',
+      isPartOf: {
+        '@type': 'Blog',
+        '@id': `${Astro.site}blog/#blog`,
+        name: 'Shadcn Studio Blog'
+      },
+      wordCount: postContent.trim().split(/\s+/).length,
+      timeRequired: `PT${readTime}M`
+    },
+
+    // BreadcrumbList schema
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${Astro.site}blog/${post.data.slug}/#breadcrumb`,
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: Astro.site?.toString() || ''
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Blog',
+          item: `${Astro.site}blog/`
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: post.data.title,
+          item: `${Astro.site}blog/${post.data.slug}/`
+        }
+      ]
+    },
+
+    // WebPage schema
+    {
+      '@type': 'WebPage',
+      '@id': `${Astro.site}blog/${post.data.slug}/#webpage`,
+      url: `${Astro.site}blog/${post.data.slug}/`,
+      name: post.data.title,
+      description: post.data.description,
+      datePublished: post.data.pubDate,
+      dateModified: post.data.pubDate,
+      inLanguage: 'en-US',
+      isPartOf: {
+        '@type': 'WebSite',
+        '@id': `${Astro.site}#website`
+      },
+      breadcrumb: {
+        '@id': `${Astro.site}blog/${post.data.slug}/#breadcrumb`
+      },
+      primaryImageOfPage: {
+        '@id': `${Astro.site}blog/${post.data.slug}/#primaryimage`
+      }
+    }
+  ]
+}
+
+const allPosts = await getAllPosts()
+const sameCategoryPosts = allPosts.filter(
+  p => p.data.category === post.data.category && p.data.slug !== currentPostSlug
+)
+const otherCategoryPosts = allPosts.filter(
+  p => p.data.category !== post.data.category && p.data.slug !== currentPostSlug
+)
+const relatedPosts = [...sameCategoryPosts, ...otherCategoryPosts].slice(0, 3).map(post => ({
+  slug: post.data.slug,
+  title: post.data.title,
+  description: post.data.description,
+  imageUrl: post.data.imageUrl,
+  imageAlt: post.data.imageAlt || post.data.title,
+  pubDate: post.data.pubDate,
+  author: post.data.author,
+  avatarUrl: post.data.avatarUrl || '',
+  category: post.data.category,
+  readTime: calculateReadTime(post.body || ''),
+  featured: post.data.featured,
+  tags: post.data.tags
+}))
+---
+
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.imageUrl}
+  type='article'
+  publishedTime={post.data.pubDate}
+  author={post.data.author}
+  schema={schema}
+  keywords={post.data.tags?.join(', ')}
+>
+  <div class='pt-22 sm:pt-27'>
+    <section class='relative py-8 sm:py-16 lg:py-24'>
+      <div class='mx-auto max-w-7xl px-4 text-white sm:px-6 lg:px-8'>
+        <div class='text-white'>
+          <MotionPreset client:load fade slide blur transition={{ duration: 0.5 }} className='mb-6'>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href='/' className='text-white/70 hover:text-white'> Home </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className='text-white/70' />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href='/blog' className='text-white/70 hover:text-white'> Blog </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className='text-white/70' />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className='text-white'>{post.data.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </MotionPreset>
+
+          <div class='grid grid-cols-2 items-center gap-16 max-lg:grid-cols-1'>
+            <div>
+              <MotionPreset
+                client:load
+                fade
+                slide
+                blur
+                transition={{ duration: 0.5 }}
+                delay={0.3}
+                className='mb-6 text-2xl font-semibold text-white md:text-3xl lg:text-4xl'
+              >
+                <h1>{post.data.title}</h1>
+              </MotionPreset>
+
+              <MotionPreset
+                client:load
+                fade
+                blur
+                slide
+                delay={0.5}
+                transition={{ duration: 0.5 }}
+                className='text-xl text-white/70'
+              >
+                <p>{post.data.description}</p>
+              </MotionPreset>
+
+              <MotionPreset client:load fade blur delay={0.6} transition={{ duration: 0.5 }} className='my-6'>
+                <Separator className='bg-white/40' />
+              </MotionPreset>
+
+              <div class='flex flex-wrap items-center justify-between gap-2'>
+                <MotionPreset
+                  client:load
+                  fade
+                  blur
+                  slide={{ direction: 'down', offset: 70 }}
+                  delay={0.6}
+                  transition={{ duration: 0.5 }}
+                  className='flex items-center gap-2'
+                >
+                  <AuthorMetadata author={post.data.author} avatarUrl={post.data.avatarUrl} client:load />
+                  <div class='flex flex-col'>
+                    <span class='text-sm text-white/70'>Written by</span>
+                    <span>{post.data.author}</span>
+                  </div>
+                </MotionPreset>
+
+                <MotionPreset
+                  client:load
+                  fade
+                  blur
+                  slide={{ direction: 'down', offset: 70 }}
+                  delay={0.7}
+                  transition={{ duration: 0.5 }}
+                  className='flex flex-col'
+                >
+                  <span class='text-sm text-white/70'>Read Time</span>
+                  <span>{readTime} min read</span>
+                </MotionPreset>
+
+                <MotionPreset
+                  client:load
+                  fade
+                  blur
+                  slide={{ direction: 'down', offset: 70 }}
+                  delay={0.8}
+                  transition={{ duration: 0.5 }}
+                  className='flex flex-col'
+                >
+                  <span class='text-sm text-white/70'>Posted on</span>
+                  <span>
+                    {
+                      new Date(post.data.pubDate ?? '').toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: '2-digit'
+                      })
+                    }
+                  </span>
+                </MotionPreset>
+              </div>
+            </div>
+
+            <MotionPreset
+              client:load
+              fade
+              slide={{ direction: 'right', offset: 50 }}
+              blur
+              transition={{ duration: 0.5 }}
+              delay={0.3}
+            >
+              <img
+                src={post.data.imageUrl}
+                alt={post.data.title}
+                class='mx-auto mb-8 rounded-xl border border-white/20'
+              />
+            </MotionPreset>
+          </div>
+        </div>
+
+        <MotionPreset client:load fade blur delay={0.7} transition={{ duration: 0.8 }}>
+          <article
+            id='content'
+            class='prose dark:prose-invert max-w-none'
+            itemscope
+            itemtype='https://schema.org/BlogPosting'
+          >
+            <meta itemprop='headline' content={post.data.title} />
+            <meta itemprop='description' content={post.data.description} />
+            <meta itemprop='datePublished' content={post.data.pubDate} />
+            <meta itemprop='author' content={post.data.author} />
+            <div itemprop='articleBody'>
+              <Content />
+            </div>
+          </article>
+        </MotionPreset>
+
+        <div class='flex items-center justify-between gap-4 pt-16'>
+          {
+            navigation.older ? (
+              <GlassButton client:load className='px-3'>
+                <a href={`/blog/${navigation.older.data.slug}`} class='group flex items-center gap-2'>
+                  <ChevronLeftIcon className='transition-transform duration-300 group-hover:-translate-x-1' />
+                  Previous Post
+                </a>
+              </GlassButton>
+            ) : (
+              <GlassButton client:load disabled className='px-3'>
+                <ChevronLeftIcon />
+                Previous Post
+              </GlassButton>
+            )
+          }
+          {
+            navigation.newer ? (
+              <GlassButton client:load className='px-3'>
+                <a href={`/blog/${navigation.newer.data.slug}`} class='flex items-center gap-2'>
+                  Next Post
+                  <ChevronRightIcon className='transition-transform duration-300 group-hover:translate-x-1' />
+                </a>
+              </GlassButton>
+            ) : (
+              <GlassButton client:load disabled className='px-3'>
+                Next Post
+                <ChevronRightIcon />
+              </GlassButton>
+            )
+          }
+        </div>
+      </div>
+
+      <!-- Background Decoration -->
+      <MotionPreset
+        client:load
+        fade
+        slide={{ direction: 'left', offset: 100 }}
+        delay={0.9}
+        transition={{ duration: 0.5 }}
+        className='absolute top-[10%] -left-[20%] -z-1 w-full opacity-50 md:w-[80%] xl:w-1/2'
+      >
+        <img src='/images/bg-glow.webp' alt='Background decoration' class='rotate-150' />
+      </MotionPreset>
+      <MotionPreset
+        client:load
+        fade
+        slide={{ direction: 'right', offset: 100 }}
+        delay={0.9}
+        transition={{ duration: 0.5 }}
+        className='absolute -right-[30%] bottom-[10%] -z-1 w-full opacity-50 md:w-[80%] xl:w-1/2'
+      >
+        <img src='/images/bg-glow.webp' alt='Background decoration' class='rotate-150' />
+      </MotionPreset>
+    </section>
+
+    <!-- Releated Post -->
+    <RelatedBlogSection posts={relatedPosts} client:load />
+    <!-- Faq -->
+    <FAQSection client:load />
+  </div>
+  <script>
+    if (document.querySelector('.katex')) {
+      if (!document.querySelector('link[href*="katex.min.css"]')) {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css'
+        document.head.appendChild(link)
+      }
+    }
+  </script>
+</Layout>

@@ -1,0 +1,96 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { getAllPosts, calculateReadTime } from '@/lib/data-utils'
+import BlogHeroSection from '@/components/blog/blog-hero-section/blog-hero-section'
+import BlogSection from '@/components/blog/blog-section/blog-section'
+import FAQSection from '@/components/sections/faq-section'
+import CTASection from '@/components/sections/cta-section'
+
+// Get all blog posts
+const allPosts = await getAllPosts()
+
+// Transform posts to match the BlogPost type
+const blogData = allPosts.map(post => ({
+  slug: post.data.slug,
+  title: post.data.title,
+  description: post.data.description,
+  imageUrl: post.data.imageUrl,
+  imageAlt: post.data.imageAlt || post.data.title,
+  pubDate: post.data.pubDate,
+  author: post.data.author,
+  avatarUrl: post.data.avatarUrl || '',
+  category: post.data.category,
+  readTime: calculateReadTime(post.body || ''),
+  featured: post.data.featured,
+  tags: post.data.tags
+}))
+
+const filteredBlogData = blogData.filter(post => post.featured)
+
+const pageTitle = 'Blog'
+const pageDescription =
+  'Latest articles, tutorials, and product updates about Neural AI, applied machine learning, and building smarter products.'
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    // Blog schema
+    {
+      '@type': 'Blog',
+      '@id': `${Astro.site}blog/#blog`,
+      name: 'Shadcn Studio Blog',
+      description: pageDescription,
+      url: `${Astro.site}blog/`,
+      inLanguage: 'en-US',
+      publisher: {
+        '@type': 'Organization',
+        name: 'Shadcn Studio',
+        logo: {
+          '@type': 'ImageObject',
+          url: `${Astro.site}images/site-logo.png`
+        }
+      },
+      blogPost: blogData.map(post => ({
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.description,
+        image: {
+          '@type': 'ImageObject',
+          url: new URL(post.imageUrl, Astro.site).toString()
+        },
+        datePublished: post.pubDate,
+        author: {
+          '@type': 'Person',
+          name: post.author
+        },
+        url: `${Astro.site}blog/${post.slug}/`,
+        keywords: post.tags?.join(', '),
+        articleSection: post.category
+      }))
+    },
+
+    // WebPage schema
+    {
+      '@type': 'WebPage',
+      '@id': `${Astro.site}blog/#webpage`,
+      url: `${Astro.site}blog/`,
+      name: pageTitle,
+      description: pageDescription,
+      inLanguage: 'en-US',
+      isPartOf: {
+        '@type': 'WebSite',
+        '@id': `${Astro.site}#website`
+      }
+    }
+  ]
+}
+---
+
+<Layout title={pageTitle} description={pageDescription} schema={schema}>
+  <div class='pt-22 sm:pt-27'>
+    <BlogHeroSection posts={filteredBlogData} client:load />
+    <BlogSection posts={blogData} client:load />
+    <CTASection client:load />
+    <FAQSection client:load />
+  </div>
+</Layout>
