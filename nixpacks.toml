@@ -1,5 +1,8 @@
 # Coolify / Nixpacks: avoid empty bash -c steps by pinning install, build, and start.
 # See: https://github.com/coollabsio/coolify/issues/2579
+#
+# Do not use `corepack prepare pnpm` here: Node's Corepack in the Nixpacks image can fail with
+# "Cannot find matching keyid" (signature verify). Installing pnpm via npm avoids that.
 
 providers = ["node"]
 
@@ -8,7 +11,8 @@ NIXPACKS_NODE_VERSION = "22"
 
 [phases.install]
 cmds = [
-  "corepack enable && corepack prepare pnpm@10 --activate && pnpm install --frozen-lockfile",
+  "npm install -g pnpm@10.33.0",
+  "pnpm install --frozen-lockfile",
 ]
 
 [phases.build]
