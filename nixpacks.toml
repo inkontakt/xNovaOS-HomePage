@@ -1,0 +1,18 @@
+# Coolify / Nixpacks: avoid empty bash -c steps by pinning install, build, and start.
+# See: https://github.com/coollabsio/coolify/issues/2579
+
+providers = ["node"]
+
+[variables]
+NIXPACKS_NODE_VERSION = "22"
+
+[phases.install]
+cmds = [
+  "corepack enable && corepack prepare pnpm@10 --activate && pnpm install --frozen-lockfile",
+]
+
+[phases.build]
+cmds = ["pnpm run build"]
+
+[start]
+cmd = "pnpm run start"
