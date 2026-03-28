@@ -11,6 +11,11 @@ const site = `${siteBase}/`
 
 export default defineConfig({
   site,
+  // Static `astro preview` (pnpm start) reads Astro server.allowedHosts — not vite.preview.allowedHosts.
+  // See: astro/dist/core/preview/static-preview-server.js
+  server: {
+    allowedHosts: ['xnova-os.info', 'www.xnova-os.info', '.xnova-os.info']
+  },
   integrations: [
     react(),
     mdx(),
@@ -71,13 +76,6 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
-    // Coolify / reverse proxy: Vite blocks unknown Host headers unless listed (astro preview / dev).
-    server: {
-      allowedHosts: ['xnova-os.info', 'www.xnova-os.info']
-    },
-    preview: {
-      allowedHosts: ['xnova-os.info', 'www.xnova-os.info']
-    },
     build: {
       cssMinify: true,
       minify: 'esbuild',
