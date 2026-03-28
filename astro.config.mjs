@@ -71,6 +71,13 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    // Coolify / reverse proxy: Vite blocks unknown Host headers unless listed (astro preview / dev).
+    server: {
+      allowedHosts: ['xnova-os.info', 'www.xnova-os.info']
+    },
+    preview: {
+      allowedHosts: ['xnova-os.info', 'www.xnova-os.info']
+    },
     build: {
       cssMinify: true,
       minify: 'esbuild',
